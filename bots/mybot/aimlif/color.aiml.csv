@@ -1,0 +1,2 @@
+0,ANADIR *,*,*,Antes de agregar el color el conjunto tiene:#Newline      <think><set var="colores"><readset>color</readset></set></think>#Newline      <get var="colores"/>#Newline      Agregando color <star/>#Newline      <addtoset>#Newline        <name>color</name>#Newline        <key><star/></key>#Newline      </addtoset>#Newline      Despues de agregar el color el conjunto tiene:#Newline      <think><set var="colores"><readset>color</readset></set></think>#Newline      <get var="colores"/>,color.aiml
+0,COLOR <SET>COLOR</SET>,*,*,Este color pertenece al conjunto,color.aiml
