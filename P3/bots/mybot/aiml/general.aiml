@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+	<!-- File: general.aiml -->
+	<!-- Author: Rafa -->
+	<!-- Last modified: May 17, 2017  -->
+
+<category>
+  <pattern>a *</pattern>
+  <template>
+    <srai>BARRASAESPACIOS <star/></srai>
+  </template>
+</category>
+
+<category>
+  <pattern>b *</pattern>
+  <template>
+    ola q ase
+  </template>
+</category>
+
+<category>
+  <pattern>c *</pattern>
+  <template>
+    ola q ise
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>OLA *</that>
+  <template>
+    pppppppppppppp
+  </template>
+</category>
+
+
+
+
+
+
+
+<!--          SALUDO              -->
+<category>
+  <pattern>^ hola ^</pattern>
+  <template><srai>SALUDO</srai></template>
+</category>
+
+<category>
+  <pattern>buenas ^</pattern>
+  <template><srai>SALUDO</srai></template>
+</category>
+
+<category>
+  <pattern>^ [buenos buenas] [dias tardes noches] ^</pattern>
+  <template><srai>SALUDO</srai></template>
+</category>
+
+<category>
+  <pattern>SALUDO</pattern>
+  <template>
+    <random>
+      <li>¡Hola!</li>
+      <li>¡Buenas!</li>
+    </random>
+  </template>
+</category>
+
+<!--                        AGREGAR COSAS                        -->
+<category>
+  <pattern>^ [agregar agregarme agrega agregame añadir añadirme añade añademe incluir incluirme incluye incluyeme meter meterme mete meteme crear crearme crea creame] *</pattern>
+  <template>
+    <think><set var="pos"><srai>FINDITEM contacto IN <star index="2"/></srai></set></think>
+    <condition var="pos">
+      <li value="0">
+        <think><set var="pos"><srai>FINDITEM evento IN <star index="2"/></srai></set></think>
+        <condition var="pos">
+          <li value="0">No he entendido lo que quieres añadir a tu agenda.</li>
+          <li><srai>AGREGAR EVENTO</srai></li>
+        </condition>
+      </li>
+      <li><srai>AÑADIR CONTACTO</srai></li>
+    </condition>
+  </template>
+</category>
+
+
+
+
+
+
+
+
+
+<!--                        PLANTILLA                            -->
+<category>
+  <pattern></pattern>
+  <template></template>
+</category>
+
+
+</aiml>

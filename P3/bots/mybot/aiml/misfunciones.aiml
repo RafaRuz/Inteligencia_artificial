@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+	<!-- File: misfunciones.aiml -->
+	<!-- Author: Rafa -->
+	<!-- Last modified: May 17, 2017  -->
+
+
+<!--                    RESUMEN
+    EVENTO *(FECHA) *(HORA)
+    QUITARDOSPUNTOS *
+
+
+-->
+
+
+
+
+<!-- Determina si hay un evento en una fecha y hora determinadas, devuelve
+el nombre del evento en caso afirmativo o null en caso contrario -->
+<category>
+  <pattern>EVENTO * *</pattern>
+  <template>
+    <think>
+      <!-- Guardo los parametros de entrada -->
+      <set var="fecha"><star/></set>
+      <set var="hora"><star index="2"/></set>
+      <!-- Verifico que existan eventos para esa fecha -->
+      <set var="fechas"><readkeys>evento</readkeys></set>
+      <set var="hay">
+      <srai>FINDITEM <get var="fecha"/> IN <get var="fechas"/> º</srai>
+      </set>
+    </think>
+    <condition var="hay">
+      <li value="0">null</li><!-- No hay eventos -->
+      <li>
+        <think>
+        <!-- Recupero del diccionario la lista de valores -->
+        <set var="lista"><map name="eventos"><get var="fecha"/></map></set>
+        <set var="pos"><map name="hora_posicion"><get var="hora"/></map></set>
+        </think>
+        <srai>SELECTITEM <get var="pos"/> IN <get var="lista"/></srai>
+      </li>
+    </condition>
+  </template>
+</category>
+
+
+
+<category>
+  <pattern>QUITARDOSPUNTOS *</pattern>
+  <template>
+    <think>
+      <set var="hora"><srai>deletrea <star/></srai></set>
+      <set var="temp"><srai>TOP <get var="hora"/></srai></set>
+      <set var="cadena_temp"></set>
+      <condition var="temp">
+        <li value=":"><set var="hora"><srai>quitarespacios <get var="cadena_temp"/><srai>REMAIN <get var="hora"/></srai></srai></set></li>
+        <li>
+          <set var="cadena_temp"><get var="cadena_temp"/><srai>TOP <get var="hora"/></srai></set>
+          <set var="hora"><srai>REMAIN <get var="hora"/></srai></set>
+          <set var="temp"><srai>TOP <get var="hora"/></srai></set>
+          <loop/>
+        </li>
+      </condition>
+    </think>
+    <get var="hora"/>
+  </template>
+</category>
+
+
+<category>
+  <pattern>BARRASAESPACIOS *</pattern>
+  <template>
+    <think>
+      cadena=<set var="cadena"><srai>deletrea <star/></srai></set>
+      item=<set var="item"><srai>TOP <get var="cadena"/></srai></set>
+      solucion=<set var="solucion"></set>
+      <condition var="item">
+        <li value="/">
+          cadena=<set var="cadena"><srai>REMAIN <get var="cadena"/></srai></set>
+          item=<set var="item"><srai>TOP <get var="cadena"/></srai></set>
+          solucion=<set var="solucion"><get var="solucion"/> <get var="item"/></set>
+          cadena=<set var="cadena"><srai>REMAIN <get var="cadena"/></srai></set>
+          item=<set var="item"><srai>TOP <get var="cadena"/></srai></set>
+          <loop/>
+        </li>
+        <li value="$">
+          <get var="solucion"/>
+        </li>
+        <li>
+          solucion=<set var="solucion"><get var="solucion"/><srai>TOP <get var="cadena"/></srai></set>
+          cadena=<set var="cadena"><srai>REMAIN <get var="cadena"/></srai></set>
+          item=<set var="item"><srai>TOP <get var="cadena"/></srai></set>
+          <loop/>
+        </li>
+      </condition>
+    </think>
+    <get var="solucion"/>
+  </template>
+</category>
+
+
+
+
+<!--                        PLANTILLA                            -->
+<category>
+  <pattern></pattern>
+  <template></template>
+</category>
+
+
+</aiml>

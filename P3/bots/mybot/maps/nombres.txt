@@ -1,0 +1,7 @@
+ruz_gomez:rafael
+asd:NORESP
+ruz_perez:caracol
+pollas:en ollas
+ru<:palo
+noresp:NORESP
+a:NORESP

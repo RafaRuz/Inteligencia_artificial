@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+	<!-- File: evento.aiml -->
+	<!-- Author: Rafa -->
+	<!-- Last modified: May 17, 2017  -->
+
+<!--                      AÑADIR CONTACTO                       -->
+<category>
+  <pattern>^ nuevo evento ^</pattern>
+  <template><srai>AÑADIR EVENTO</srai></template>
+</category>
+
+<category>
+  <pattern>AÑADIR EVENTO</pattern>
+  <template>Dime el nombre del evento</template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME EL NOMBRE DEL EVENTO</that>
+  <template>
+    <think><set name="nombre_evento"><star/></set></think>
+    Dime la fecha del evento
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA FECHA DEL EVENTO</that>
+  <template>
+    <think><set var="fecha_valida"><srai>VALIDDATE <srai>BARRASAESPACIOS <star/> º</srai></srai></set></think>
+    <condition var="fecha_valida">
+      <li value="YES">
+        <think><set name="fecha_evento"><star/></set></think>
+        Dime la hora del evento
+      </li>
+      <li>La fecha introducida no es valida</li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA HORA DEL EVENTO</that>
+  <template>
+    <think>
+      <set name="hora_evento"><star/></set>
+      <set var="pos_hora"><srai>FINDITEM <srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai> IN <readkeys>hora_posicion</readkeys></srai></set>
+    </think>
+    <condition var="pos_hora">
+      <li value="0">La hora indicada no es valida. Recuerde que los eventos comienzan a las en punto y a las y media</li>
+      <li>
+        <addtomap>
+          <name>eventos</name>
+          <key><get name="fecha_evento"/></key>
+          <value><srai>CHANGEITEM <get var="pos_hora"/> BY <srai>ponerbarrabaja <get name="nombre_evento"/></srai> IN null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</srai></value>
+        </addtomap>
+        Quiere asociar algun contacto al evento?
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>^ si ^</pattern>
+  <that>^ QUIERE ASOCIAR * CONTACTO AL EVENTO</that>
+  <template>Dime el apellido del contacto que desea asociar al evento</template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME EL APELLIDO DEL CONTACTO QUE DESEA ASOCIAR AL EVENTO</that>
+  <template>
+    <think><set var="pos"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <readset>contactos</readset> º</srai></set></think>
+    <condition var="pos">
+      <li value="0">
+        El contacto que quiere asociar no se encuentra en su agenda, quiere asociar otro contacto al evento?
+      </li>
+      <li>
+        <think><set var="pos_temp"><srai>FINDITEM <get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai> IN <readkeys>evper</readkeys></srai></set></think>
+        <condition var="pos_temp">
+          <li value="0">
+            <addtomap>
+              <name>evper</name>
+              <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+              <value><srai>ponerbarrabaja <star/></srai></value>
+            </addtomap>
+          </li>
+          <li>
+            <modifymap>
+              <name>evper</name>
+              <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+              <value><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> <srai>ponerbarrabaja <star/></srai></value>
+            </modifymap>
+          </li>
+        </condition>
+        Contacto agregado, quiere asociar otro contacto al evento?
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>^ no ^</pattern>
+  <that>^ QUIERE ASOCIAR * CONTACTO AL EVENTO</that>
+  <template>Perfecto. Evento <get name="nombre_evento"/> añadido el <get name="fecha_evento"/> a las <get name="hora_evento"/></template>
+</category>
+
+
+
+
+<!--                        PLANTILLA                            -->
+<category>
+  <pattern></pattern>
+  <template></template>
+</category>
+
+
+</aiml>
