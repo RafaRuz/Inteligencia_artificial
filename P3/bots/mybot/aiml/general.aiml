@@ -7,21 +7,21 @@
 <category>
   <pattern>a *</pattern>
   <template>
-    <srai>BARRASAESPACIOS <star/></srai>
+    <srai>SELECTITEM 2 IN <star/></srai>
   </template>
 </category>
 
 <category>
-  <pattern>b *</pattern>
+  <pattern>^ <set>dias_validos</set> ([de del]) [<set>meses_validos</set> <set>meses_validos_letra</set>] ([de del]) <set>años_validos</set> ^</pattern>
   <template>
-    ola q ase
+    OLEEEEEEEEEEEEEEEE <star/> <star index="2"/> <star index="3"/> <star index="4"/> <star index="5"/>
   </template>
 </category>
 
 <category>
-  <pattern>c *</pattern>
+  <pattern><set>dias_validos</set>/<set>meses_validos</set>/<set>años_validos</set></pattern>
   <template>
-    ola q ise
+    OLEEEEEEEEE
   </template>
 </category>
 
@@ -75,7 +75,7 @@
         <think><set var="pos"><srai>FINDITEM evento IN <star index="2"/></srai></set></think>
         <condition var="pos">
           <li value="0">No he entendido lo que quieres añadir a tu agenda.</li>
-          <li><srai>AGREGAR EVENTO</srai></li>
+          <li><srai>AÑADIR EVENTO</srai></li>
         </condition>
       </li>
       <li><srai>AÑADIR CONTACTO</srai></li>
@@ -83,6 +83,21 @@
   </template>
 </category>
 
+<!--
+<category>
+  <pattern>^ [agregar agregarme agrega agregame añadir añadirme añade añademe incluir incluirme incluye incluyeme meter meterme mete meteme crear crearme crea creame] ^ evento ^</pattern>
+  <template>
+    <srai>AÑADIR EVENTO</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>^ [agregar agregarme agrega agregame añadir añadirme añade añademe incluir incluirme incluye incluyeme meter meterme mete meteme crear crearme crea creame] ^ contacto ^</pattern>
+  <template>
+    <srai>AÑADIR CONTACTO</srai>
+  </template>
+</category>
+-->
 
 
 
