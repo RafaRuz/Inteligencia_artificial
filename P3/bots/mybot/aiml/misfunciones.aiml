@@ -51,20 +51,23 @@ el nombre del evento en caso afirmativo o null en caso contrario -->
   <pattern>QUITARDOSPUNTOS *</pattern>
   <template>
     <think>
-      <set var="hora"><srai>deletrea <star/></srai></set>
-      <set var="temp"><srai>TOP <get var="hora"/></srai></set>
-      <set var="cadena_temp"></set>
-      <condition var="temp">
-        <li value=":"><set var="hora"><srai>quitarespacios <get var="cadena_temp"/><srai>REMAIN <get var="hora"/></srai></srai></set></li>
+      <set var="cadena"><srai>deletrea <star/></srai></set>
+      <set var="item"><srai>TOP <get var="cadena"/></srai></set>
+      <set var="solucion"></set>
+      <condition var="item">
+        <li value="$"><get var="solucion"/></li>
+        <li value=":">
+          <set var="cadena"><srai>REMAIN <get var="cadena"/></srai></set>
+          <set var="item"><srai>TOP <get var="cadena"/></srai></set>
+        </li>
         <li>
-          <set var="cadena_temp"><get var="cadena_temp"/><srai>TOP <get var="hora"/></srai></set>
-          <set var="hora"><srai>REMAIN <get var="hora"/></srai></set>
-          <set var="temp"><srai>TOP <get var="hora"/></srai></set>
+          <set var="solucion"><get var="solucion"/><get var ="item"/></srai></set>
+          <set var="cadena"><srai>REMAIN <get var="cadena"/></srai></set>
+          <set var="item"><srai>TOP <get var="cadena"/></srai></set>
           <loop/>
         </li>
       </condition>
     </think>
-    <get var="hora"/>
   </template>
 </category>
 

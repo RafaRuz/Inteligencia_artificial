@@ -193,7 +193,193 @@
 
 
 
-<!--                        PLANTILLA                            -->
+
+<!--                         CANTIDAD DE EVENTOS                         -->
+<category>
+  <pattern>^ [cuantos cantidad] ^ eventos ^ en total ^</pattern>
+  <template>Tienes un total de <srai>CANTIDAD EVENTOS TOTAL</srai> eventos en la agenda</template>
+</category>
+
+<category>
+  <pattern>^ [cuantos cantidad] ^ eventos ^ en la agenda ^</pattern>
+  <template>Tienes un total de <srai>CANTIDAD EVENTOS TOTAL</srai> eventos en la agenda</template>
+</category>
+
+<category>
+  <pattern>CANTIDAD EVENTOS TOTAL</pattern>
+  <template>
+    <think>
+      <set var="lista_fechas"><readkeys>eventos</readkeys></set>
+      <set var="fecha"><srai>TOP <get var="lista_fechas"/></srai></set>
+      <set var="lista_fechas"><srai>REMAIN <get var="lista_fechas"/></srai></set>
+      <set var="num_eventos">0</set>
+    </think>
+    <condition var="fecha">
+      <li value="$"><get var="num_eventos"/></li>
+      <li>
+        <think><set var="num_eventos_fecha"><srai>CANTIDADEVENTOS <get var="fecha"/></srai></set></think>
+        <condition var="num_eventos_fecha">
+          <li value="0"></li>
+          <li>
+            <think>
+              <set var="num_eventos_fecha"><map name="predecessor"><get var="num_eventos_fecha"/></map></set>
+              <set var="num_eventos"><map name="successor"><get var="num_eventos"/></map></set>
+            </think>
+            <loop/>
+          </li>
+        </condition>
+        <think>
+          <set var="fecha"><srai>TOP <get var="lista_fechas"/></srai></set>
+          <set var="lista_fechas"><srai>REMAIN <get var="lista_fechas"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
+
+
+
+
+<!--                         MODIFICAR EVENTO                            -->
+<category>
+  <pattern>^ [modificar modificarme cambiar cambiarme] ^ evento ^</pattern>
+  <template>Dime la fecha del evento a modificar</template>
+</category>
+
+<category>
+  <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
+  <template></template>
+</category>
+
+<category>
+  <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
+  <template></template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
+  <template></template>
+</category>
+
+
+
+Desea modificar el titulo, la hora o un contacto asociado?
+<category>
+  <pattern>^ titulo ^</pattern>
+  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template></template>
+</category>
+
+<category>
+  <pattern>^ hora ^</pattern>
+  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template></template>
+</category>
+
+<category>
+  <pattern>^ contacto ^</pattern>
+  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template></template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template>No le he entendido, desea modificar el titulo, la hora o un contacto asociado?</template>
+</category>
+
+<category>
+  <pattern>^ nada ^</pattern>
+  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template>De acuerdo, no modifico nada</template>
+</category>
+
+
+
+<category>
+  <pattern></pattern>
+  <template></template>
+</category>
+
+<category>
+  <pattern></pattern>
+  <template></template>
+</category>
+
+
+
+
+
+<!--                            BORRAR EVENTO                            -->
+
+
+
+
+
+<!--           CANTIDAD EVENTOS EN UNA FECHA PARTICULAR                  -->
+<category>
+  <pattern>^ [cantidad cuantos] ^ eventos ^ el (dia) *</pattern>
+  <template>Tienes <srai>CANTIDADEVENTOS <star index="4"/></srai> eventos</template>
+</category>
+
+<category>
+  <pattern>^ [cantidad cuantos] ^ eventos ^ el (dia) <set>dias_validos</set> (de) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>Tienes <srai>CANTIDADEVENTOS <star index="4"/>/<map name="mes_numero"><star index="5"/></map>/<star index="6"/></srai> eventos</template>
+</category>
+
+<category>
+  <pattern>^ [cantidad cuantos] ^ eventos ^ el <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>Tienes <srai>CANTIDADEVENTOS <star index="4"/>/<star index="5"/>/<star index="6"/></srai> eventos</template>
+</category>
+
+<category>
+  <pattern>CANTIDADEVENTOS *</pattern>
+  <template>
+    <think><set var="eventos"><map name="eventos"><star/></map></set></think>
+    <condition var="eventos">
+      <li value="unknown">0</li>
+      <li>
+        <think>
+          <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+          <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+          <set var="num">0</set>
+        </think>
+        <condition var="palabra">
+          <li value="null">
+            <think>
+              <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+              <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+            </think>
+            <loop/>
+          </li>
+          <li value="$"><get var="num"/></li>
+          <li>
+            <think>
+              <set var="num"><map name="successor"><get var="num"/></map></set>
+              <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+              <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+            </think>
+            <loop/>
+          </li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
+
+
+
+
+
+
+
+
+<!--                              PLANTILLA                              -->
 <category>
   <pattern></pattern>
   <template></template>

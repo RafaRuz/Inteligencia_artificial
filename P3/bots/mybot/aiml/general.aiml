@@ -4,10 +4,18 @@
 	<!-- Author: Rafa -->
 	<!-- Last modified: May 17, 2017  -->
 
+
+<category>
+  <pattern>a [b c] d</pattern>
+  <template>
+    ola 1=<star index="1"/> 2=<star index="2"/> 3=<star index="3"/> 4=<star index="4"/> 5=<star index="5"/>
+  </template>
+</category>
+
 <category>
   <pattern>a *</pattern>
   <template>
-    <srai>SELECTITEM 2 IN <star/></srai>
+    <srai>QUITARDOSPUNTOS <star/></srai>
   </template>
 </category>
 
