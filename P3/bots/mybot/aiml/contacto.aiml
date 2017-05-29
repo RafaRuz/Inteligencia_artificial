@@ -179,7 +179,7 @@
 
 <!--                      MODIFICAR CONTACTO                     -->
 <category>
-  <pattern>^ [modificar modificarme cambiar cambiarme] ^ (contacto) ^</pattern>
+  <pattern>^ [modificar modificarme cambiar cambiarme] ^ contacto ^</pattern>
   <template>Dime el apellido del contacto que deseas modificar</template>
 </category>
 

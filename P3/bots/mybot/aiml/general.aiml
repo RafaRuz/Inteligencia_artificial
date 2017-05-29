@@ -6,40 +6,12 @@
 
 
 <category>
-  <pattern>a [b c] d</pattern>
-  <template>
-    ola 1=<star index="1"/> 2=<star index="2"/> 3=<star index="3"/> 4=<star index="4"/> 5=<star index="5"/>
-  </template>
-</category>
-
-<category>
   <pattern>a *</pattern>
   <template>
     <srai>QUITARDOSPUNTOS <star/></srai>
   </template>
 </category>
 
-<category>
-  <pattern>^ <set>dias_validos</set> ([de del]) [<set>meses_validos</set> <set>meses_validos_letra</set>] ([de del]) <set>años_validos</set> ^</pattern>
-  <template>
-    OLEEEEEEEEEEEEEEEE <star/> <star index="2"/> <star index="3"/> <star index="4"/> <star index="5"/>
-  </template>
-</category>
-
-<category>
-  <pattern><set>dias_validos</set>/<set>meses_validos</set>/<set>años_validos</set></pattern>
-  <template>
-    OLEEEEEEEEE
-  </template>
-</category>
-
-<category>
-  <pattern>*</pattern>
-  <that>OLA *</that>
-  <template>
-    pppppppppppppp
-  </template>
-</category>
 
 
 

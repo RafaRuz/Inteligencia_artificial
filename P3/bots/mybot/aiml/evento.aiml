@@ -177,14 +177,20 @@
             </addtomap>
           </li>
           <li>
-            <modifymap>
-              <name>evper</name>
-              <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
-              <value><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> <srai>ponerbarrabaja <star/></srai></value>
-            </modifymap>
+            <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></set></think>
+            <condition var="pos_contacto">
+              <li value="0">
+                <modifymap>
+                  <name>evper</name>
+                  <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+                  <value><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> <srai>ponerbarrabaja <star/></srai></value>
+                </modifymap>
+                Contacto agregado, quiere asociar otro contacto al evento?
+              </li>
+              <li>El contacto que intenta añadir ya va a asistir al evento. Quiere asociar otro contacto al evento?</li>
+            </condition>
           </li>
         </condition>
-        Contacto agregado, quiere asociar otro contacto al evento?
       </li>
     </condition>
   </template>
@@ -248,37 +254,125 @@
   <template>Dime la fecha del evento a modificar</template>
 </category>
 
+<!--
 <category>
   <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
   <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
-  <template></template>
+  <template>
+    <think><set name="fecha_evento_modificar"><star index="2"/>/<star index="3"/>/<star index="4"/></set>
+    Dime la hora del evento a modificar
+  </template>
 </category>
-
+-->
 <category>
   <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
   <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
-  <template></template>
+  <template>
+  <think><set name="fecha_evento_modificar"><star index="2"/>/<map name="mes_numero"><star index="3"/></map>/<star index="4"/></set></think>
+  Dime la hora del evento a modificar
+  </template>
 </category>
 
 <category>
   <pattern>*</pattern>
   <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
-  <template></template>
+  <template>
+    <think>
+      <set var="dia"><srai>SELECTITEM 1 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="mes"><srai>SELECTITEM 2 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="anio"><srai>SELECTITEM 3 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset></srai></set>
+      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset></srai></set>
+      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset></srai></set>
+      <set var="fecha_valida"><srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="anio"/></srai></set>
+      <set var="validez">1</set>
+    </think>
+    <condition var="dia_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="mes_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="anio_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="fecha_valida">
+      <li value="YES"></li>
+      <li><think><set var="validez">0</set></think></li>
+    </condition>
+    <condition var="validez">
+      <li value="0">La fecha indicada no es valida</li>
+      <li>
+        <think><set name="fecha_evento_modificar"><get var="dia"/>/<get var="mes"/>/<get var="anio"/></set></think>
+        Dime la hora del evento a modificar
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>^ <set>horas_validas</set> ^</pattern>
+  <that>DIME LA HORA DEL EVENTO A MODIFICAR</that>
+  <template>
+    <think><set name="hora_evento_modificar"><star index="2"/></set></think>
+    Desea modificar el titulo, la hora o un contacto asociado?
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA HORA DEL EVENTO A MODIFICAR</that>
+  <template>
+    La hora indicada no es valida. Recuerde que los eventos comienzan a las en punto y a las y media. El formato de la hora es hh:mm donde hh esta en formato 24 horas
+  </template>
 </category>
 
 
-
-Desea modificar el titulo, la hora o un contacto asociado?
 <category>
   <pattern>^ titulo ^</pattern>
   <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
-  <template></template>
+  <template>
+    Dime el nuevo titulo del evento
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME EL NUEVO TITULO DEL EVENTO</that>
+  <template>
+    <modifymap>
+      <name>eventos</name>
+      <key><get name="fecha_evento_modificar"/></key>
+      <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento_modificar"/></srai></map> BY <srai>ponerbarrabaja <star/></srai> IN <map name="eventos"><get name="fecha_evento_modificar"/></map></srai></value>
+    </modifymap>
+    Titulo del evento el dia <get name="fecha_evento_modificar"/> a las <get name="hora_evento_modificar"/> modificado por: <star/>
+  </template>
 </category>
 
 <category>
   <pattern>^ hora ^</pattern>
   <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
-  <template></template>
+  <template>Dime la nueva hora del evento</template>
+</category>
+
+<category>
+  <pattern>^ <set>horas_validas</set> ^</pattern>
+  <that>DIME LA NUEVA HORA DEL EVENTO</that>
+  <template>
+    <think><set name="hora_evento_modificar"><star index="2"/></set></think>
+    Desea modificar el titulo, la hora o un contacto asociado?
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA NUEVA HORA DEL EVENTO</that>
+  <template>
+    La hora indicada no es valida. Recuerde que los eventos comienzan a las en punto y a las y media. El formato de la hora es hh:mm donde hh esta en formato 24 horas
+  </template>
 </category>
 
 <category>
@@ -301,21 +395,66 @@ Desea modificar el titulo, la hora o un contacto asociado?
 
 
 
-<category>
-  <pattern></pattern>
-  <template></template>
-</category>
-
-<category>
-  <pattern></pattern>
-  <template></template>
-</category>
-
 
 
 
 
 <!--                            BORRAR EVENTO                            -->
+
+
+
+
+
+<!--                      EVENTOS EN UN DIA CONCRETO                  -->
+<category>
+  <pattern>^ [lista listame listar que] ^ eventos ^ el (dia) *</pattern>
+  <template>Tienes los siguientes eventos: <srai>EVENTOS <star index="4"/></srai></template>
+</category>
+
+<category>
+  <pattern>^ [lista listame listar que] ^ eventos ^ el (dia) <set>dias_validos</set> (de) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>Tienes los siguientes eventos: <srai>EVENTOS <star index="4"/>/<map name="mes_numero"><star index="5"/></map>/<star index="6"/></srai></template>
+</category>
+
+<category>
+  <pattern>^ [lista listame listar que] ^ eventos ^ el (dia) <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>Tienes los siguientes eventos: <srai>EVENTOS <star index="4"/>/<star index="5"/>/<star index="6"/></srai></template>
+</category>
+
+<category>
+  <pattern>EVENTOS *</pattern>
+  <template>
+    <think><set var="eventos"><map name="eventos"><star/></map></set></think>
+    <condition var="eventos">
+      <li value="unknown"></li>
+      <li>
+        <think>
+          <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+          <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+          <set var="sol"></set>
+        </think>
+        <condition var="palabra">
+          <li value="null">
+            <think>
+              <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+              <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+            </think>
+            <loop/>
+          </li>
+          <li value="$"><get var="sol"/></li>
+          <li>
+            <think>
+              <set var="sol"><get var="sol"/> <get var="palabra"/></set>
+              <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+              <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+            </think>
+            <loop/>
+          </li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
 
 
 
@@ -333,44 +472,19 @@ Desea modificar el titulo, la hora o un contacto asociado?
 </category>
 
 <category>
-  <pattern>^ [cantidad cuantos] ^ eventos ^ el <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <pattern>^ [cantidad cuantos] ^ eventos ^ el (dia) <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
   <template>Tienes <srai>CANTIDADEVENTOS <star index="4"/>/<star index="5"/>/<star index="6"/></srai> eventos</template>
 </category>
 
 <category>
   <pattern>CANTIDADEVENTOS *</pattern>
   <template>
-    <think><set var="eventos"><map name="eventos"><star/></map></set></think>
-    <condition var="eventos">
-      <li value="unknown">0</li>
-      <li>
-        <think>
-          <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
-          <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
-          <set var="num">0</set>
-        </think>
-        <condition var="palabra">
-          <li value="null">
-            <think>
-              <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
-              <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
-            </think>
-            <loop/>
-          </li>
-          <li value="$"><get var="num"/></li>
-          <li>
-            <think>
-              <set var="num"><map name="successor"><get var="num"/></map></set>
-              <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
-              <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
-            </think>
-            <loop/>
-          </li>
-        </condition>
-      </li>
-    </condition>
+    <srai>COUNT <srai>EVENTOS <star/></srai></srai>
   </template>
 </category>
+
+
+
 
 
 
