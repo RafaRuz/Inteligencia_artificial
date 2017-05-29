@@ -2,8 +2,11 @@
 1/2/2017_0900:ru< ruz_gomez ruz_perez asd
 14/10/2020_2300:pollas asd ruz_perez
 5/unknown/2017_0900:ruz_perez asd
-1/1/2020_0500:ruz_gomez ruz_perez
-1/1/2020_0000:asd asd
-1/1/2020_0030:asd ruz_gomez ruz_gomez ruz_gomez ruz_gomez
 4/4/2020_0900:asd
 1/1/2020_0200:ruz_gomez
+unknown_unknown:ruz_gomez
+2/unknown/2020_0000:asd asd ruz_gomez
+2/1/2020_0500:ruz_gomez ruz_perez asd
+2/1/2020_0000:unknown
+2/2/2020_0030:$
+5/5/2020_0030:ruz_gomez ruz_perez

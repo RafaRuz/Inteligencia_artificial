@@ -9,5 +9,13 @@
 14/10/2020:null null null null null null null null null null null null null null null null null null null null pedro_antonio null null null null null null null null null null null null null null null null null null null null null null null null null null null
 unknown:a null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
 5/unknown/2017:null null null null null null null null null null null null null null null null null null ola_q_ase null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
-1/1/2020:nuevo_titulo jiji_xd null null eventaco_guapo null null null null null comer_pollas null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
+1/1/2020:penis
 4/4/2020:null null null null null null null null null null null null null null null null null null asd null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
+2/unknown/2020:nuevo_titulo null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
+2/1/2020:La hora indicada no es valida. Recuerde que los eventos comienzan a las en punto y a las y media. El formato de la hora es hh:mm donde hh esta en formato 24 horas
+2/2/2020:La hora indicada no es valida. Recuerde que los eventos comienzan a las en punto y a las y media. El formato de la hora es hh:mm donde hh esta en formato 24 horas
+3/2/2020:null $
+3/3/2020:null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
+4/3/2020:unknown null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
+5/5/2020:null PuTa null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
+6/6/2020:null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null

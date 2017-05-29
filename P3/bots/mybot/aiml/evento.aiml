@@ -148,7 +148,7 @@
 <category>
   <pattern>^ no ^</pattern>
   <that>^ QUIERE ASOCIAR * CONTACTO AL EVENTO</that>
-  <template>Perfecto. Evento <get name="nombre_evento"/> añadido el <get name="fecha_evento"/> a las <get name="hora_evento"/></template>
+  <template>Perfecto. Evento <get name="nombre_evento"/> establecido el <get name="fecha_evento"/> a las <get name="hora_evento"/></template>
 </category>
 
 <category>
@@ -175,6 +175,7 @@
               <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
               <value><srai>ponerbarrabaja <star/></srai></value>
             </addtomap>
+            Contacto agregado, quiere asociar otro contacto al evento?
           </li>
           <li>
             <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></set></think>
@@ -254,21 +255,20 @@
   <template>Dime la fecha del evento a modificar</template>
 </category>
 
-<!--
 <category>
   <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
   <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
   <template>
-    <think><set name="fecha_evento_modificar"><star index="2"/>/<star index="3"/>/<star index="4"/></set>
+    <think><set name="fecha_evento"><star index="2"/>/<star index="3"/>/<star index="4"/></set></think>
     Dime la hora del evento a modificar
   </template>
 </category>
--->
+
 <category>
   <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
   <that>DIME LA FECHA DEL EVENTO A MODIFICAR</that>
   <template>
-  <think><set name="fecha_evento_modificar"><star index="2"/>/<map name="mes_numero"><star index="3"/></map>/<star index="4"/></set></think>
+  <think><set name="fecha_evento"><star index="2"/>/<map name="mes_numero"><star index="3"/></map>/<star index="4"/></set></think>
   Dime la hora del evento a modificar
   </template>
 </category>
@@ -306,7 +306,7 @@
     <condition var="validez">
       <li value="0">La fecha indicada no es valida</li>
       <li>
-        <think><set name="fecha_evento_modificar"><get var="dia"/>/<get var="mes"/>/<get var="anio"/></set></think>
+        <think><set name="fecha_evento"><get var="dia"/>/<get var="mes"/>/<get var="anio"/></set></think>
         Dime la hora del evento a modificar
       </li>
     </condition>
@@ -317,8 +317,11 @@
   <pattern>^ <set>horas_validas</set> ^</pattern>
   <that>DIME LA HORA DEL EVENTO A MODIFICAR</that>
   <template>
-    <think><set name="hora_evento_modificar"><star index="2"/></set></think>
-    Desea modificar el titulo, la hora o un contacto asociado?
+    <think>
+      <set name="hora_evento"><star index="2"/></set>
+      <set name="nombre_evento"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
+    </think>
+    Desea modificar el titulo, la fecha, la hora o un contacto asociado?
   </template>
 </category>
 
@@ -333,7 +336,7 @@
 
 <category>
   <pattern>^ titulo ^</pattern>
-  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <that>^ DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA O UN CONTACTO ASOCIADO</that>
   <template>
     Dime el nuevo titulo del evento
   </template>
@@ -345,16 +348,16 @@
   <template>
     <modifymap>
       <name>eventos</name>
-      <key><get name="fecha_evento_modificar"/></key>
-      <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento_modificar"/></srai></map> BY <srai>ponerbarrabaja <star/></srai> IN <map name="eventos"><get name="fecha_evento_modificar"/></map></srai></value>
+      <key><get name="fecha_evento"/></key>
+      <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY <srai>ponerbarrabaja <star/></srai> IN <map name="eventos"><get name="fecha_evento"/></map></srai></value>
     </modifymap>
-    Titulo del evento el dia <get name="fecha_evento_modificar"/> a las <get name="hora_evento_modificar"/> modificado por: <star/>
+    Titulo del evento el dia <get name="fecha_evento"/> a las <get name="hora_evento"/> modificado por: <star/>
   </template>
 </category>
 
 <category>
   <pattern>^ hora ^</pattern>
-  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <that>^ DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA O UN CONTACTO ASOCIADO</that>
   <template>Dime la nueva hora del evento</template>
 </category>
 
@@ -362,8 +365,36 @@
   <pattern>^ <set>horas_validas</set> ^</pattern>
   <that>DIME LA NUEVA HORA DEL EVENTO</that>
   <template>
-    <think><set name="hora_evento_modificar"><star index="2"/></set></think>
-    Desea modificar el titulo, la hora o un contacto asociado?
+    <think>
+      <set var="titulo_temp"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
+      <set var="titulo_evento_anterior"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <star index="2"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
+      <set var="contactos_evento_anterior"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
+    </think>
+    <condition var="titulo_evento_anterior">
+      <li value="null">
+        <removefrommap>
+          <name>evper</name>
+          <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+        </removefrommap>
+        <addtomap>
+          <name>evper</name>
+          <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <star index="2"/></srai></key>
+          <value><get var="contactos_evento_anterior"/></value>
+        </addtomap>
+        <modifymap>
+          <name>eventos</name>
+          <key><get name="fecha_evento"/></key>
+          <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY null IN <map name="eventos"><get name="fecha_evento"/></map></srai></value>
+        </modifymap>
+        <modifymap>
+          <name>eventos</name>
+          <key><get name="fecha_evento"/></key>
+          <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <star index="2"/></srai></map> BY <get var="titulo_temp"/> IN <map name="eventos"><get name="fecha_evento"/></map></srai></value>
+        </modifymap>
+        Hora del evento el dia <get name="fecha_evento"/> cambiada de <get name="hora_evento"/> a <star index="2"/>
+      </li>
+      <li>La nueva hora ya esta ocupada por otro evento</li>
+    </condition>
   </template>
 </category>
 
@@ -377,19 +408,356 @@
 
 <category>
   <pattern>^ contacto ^</pattern>
-  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
-  <template></template>
+  <that>^ DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template>Desea añadir o eliminar un contacto del evento?</template>
+</category>
+
+<category>
+  <pattern>^ añadir ^</pattern>
+  <that>^ DESEA AÑADIR O ELIMINAR UN CONTACTO DEL EVENTO</that>
+  <template>Dime el apellido del contacto que desea asociar al evento</template>
+</category>
+
+<!--          ESTO LO HACEMOS CON LA PARTE DE AÑADIR CONTACTOS QUE HAY EN AÑADIR EVENTO
+<category>
+  <pattern>*</pattern>
+  <that>^ DIME EL APELLIDO DEL CONTACTO QUE QUIERES AÑADIR</that>
+  <template>
+    <think><set var="pos"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <readset>contactos</readset> º</srai></set></think>
+    <condition var="pos">
+      <li value="0">
+        El contacto que quiere asociar no se encuentra en su agenda, dime el apellido del contacto que quieres añadir
+      </li>
+      <li>
+        <think><set var="pos_temp"><srai>FINDITEM <get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai> IN <readkeys>evper</readkeys></srai></set></think>
+        <condition var="pos_temp">
+          <li value="0">
+            <addtomap>
+              <name>evper</name>
+              <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+              <value><srai>ponerbarrabaja <star/></srai></value>
+            </addtomap>
+          </li>
+          <li>
+            <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></set></think>
+            <condition var="pos_contacto">
+              <li value="0">
+                <modifymap>
+                  <name>evper</name>
+                  <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+                  <value><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> <srai>ponerbarrabaja <star/></srai></value>
+                </modifymap>
+                Contacto agregado, quiere asociar otro contacto al evento?
+              </li>
+              <li>El contacto que intenta añadir ya va a asistir al evento. Quiere asociar otro contacto al evento?</li>
+            </condition>
+          </li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
+-->
+
+<category>
+  <pattern>^ eliminar ^</pattern>
+  <that>^ DESEA AÑADIR O ELIMINAR UN CONTACTO DEL EVENTO</that>
+  <template>Dime el apellido del contacto que quieres eliminar</template>
 </category>
 
 <category>
   <pattern>*</pattern>
-  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
-  <template>No le he entendido, desea modificar el titulo, la hora o un contacto asociado?</template>
+  <that>DIME EL APELLIDO DEL CONTACTO QUE QUIERES ELIMINAR</that>
+  <template>
+    <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></set></think>
+    <condition var="pos_contacto">
+      <li value="0">El contacto que intenta eliminar no se encuentra registrado en el evento, desea añadir o eliminar un contacto del evento?
+      </li>
+      <li>
+        <modifymap>
+          <name>evper</name>
+          <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+          <value><srai>REMOVEITEM <get var="pos_contacto"/> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></value>
+        </modifymap>
+        Contacto eliminado, desea eliminar otro contacto?
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>^ si ^</pattern>
+  <that>^ DESEA ELIMINAR OTRO CONTACTO</that>
+  <template>Dime el apellido del contacto que quieres eliminar</template>
+</category>
+
+<category>
+  <pattern>^ no ^</pattern>
+  <that>^ DESEA ELIMINAR OTRO CONTACTO</that>
+  <template>De acuerdo, evento modificado correctamente</template>
+</category>
+
+
+
+
+
+
+
+
+
+
+<category>
+  <pattern>^ fecha ^</pattern>
+  <that>^ DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template>
+    Dime la nueva fecha del evento
+  </template>
+</category>
+
+<category>
+  <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <that>DIME LA NUEVA FECHA DEL EVENTO</that>
+  <template>
+    <think>
+      <set var="nueva_fecha_evento"><star index="2"/>/<star index="3"/>/<star index="4"/></set>
+      <set var="titulo_temp"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
+      <set var="titulo_evento_anterior"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></set>
+      <set var="contactos_evento_anterior"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
+      <set var="nueva_clave_evper"><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></set>
+      <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys></srai></set>
+      <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+    </think>
+    <modifymap>
+      <name>eventos</name>
+      <key><get name="fecha_evento"/></key>
+      <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY null IN <map name="eventos"><get name="fecha_evento"/></map></srai></value>
+    </modifymap>
+    <removefrommap>
+      <name>evper</name>
+      <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+    </removefrommap>
+    <condition var="posicion_eventos">
+      <li value="0">
+        <addtomap>
+          <name>eventos</name>
+          <key><get var="nueva_fecha_evento"/></key>
+          <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY <get var="titulo_temp"/> IN null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</srai></value>
+        </addtomap>
+        <condition var="contactos_evento_anterior">
+          <li value="unknown"></li>
+          <li>
+            <addtomap>
+              <name>evper</name>
+              <key><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+              <value><get var="contactos_evento_anterior"/></value>
+            </addtomap>
+          </li>
+        </condition>
+        Fecha del evento modificada de <get name="fecha_evento"/> a <get var="nueva_fecha_evento"/>
+      </li>
+      <li>
+        <condition var="titulo_evento_anterior">
+          <li value="null">
+            <modifymap>
+              <name>eventos</name>
+              <key><get var="nueva_fecha_evento"/></key>
+              <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY <get var="titulo_temp"/> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></value>
+            </modifymap>
+            <condition var="contactos_evento_anterior">
+              <li value="unknown"></li>
+              <li>
+                <addtomap>
+                  <name>evper</name>
+                  <key><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+                  <value><get var="contactos_evento_anterior"/></value>
+                </addtomap>
+              </li>
+            </condition>
+            Fecha del evento modificada de <get name="fecha_evento"/> a <get var="nueva_fecha_evento"/>
+          </li>
+          <li>La nueva fecha ya esta ocupada por otro evento a la misma hora que el anterior</li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <that>DIME LA NUEVA FECHA DEL EVENTO</that>
+  <template>
+    <think>
+      <set var="nueva_fecha_evento"><star index="2"/>/<map name="mes_numero"><star index="3"/></map>/<star index="4"/></set>
+      <set var="titulo_temp"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
+      <set var="titulo_evento_anterior"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></set>
+      <set var="contactos_evento_anterior"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
+      <set var="nueva_clave_evper"><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></set>
+      <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys></srai></set>
+      <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+    </think>
+    <modifymap>
+      <name>eventos</name>
+      <key><get name="fecha_evento"/></key>
+      <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY null IN <map name="eventos"><get name="fecha_evento"/></map></srai></value>
+    </modifymap>
+    <removefrommap>
+      <name>evper</name>
+      <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+    </removefrommap>
+    <condition var="posicion_eventos">
+      <li value="0">
+        <addtomap>
+          <name>eventos</name>
+          <key><get var="nueva_fecha_evento"/></key>
+          <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY <get var="titulo_temp"/> IN null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</srai></value>
+        </addtomap>
+        <condition var="contactos_evento_anterior">
+          <li value="unknown"></li>
+          <li>
+            <addtomap>
+              <name>evper</name>
+              <key><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+              <value><get var="contactos_evento_anterior"/></value>
+            </addtomap>
+          </li>
+        </condition>
+        Fecha del evento modificada de <get name="fecha_evento"/> a <get var="nueva_fecha_evento"/>
+      </li>
+      <li>
+        <condition var="titulo_evento_anterior">
+          <li value="null">
+            <modifymap>
+              <name>eventos</name>
+              <key><get var="nueva_fecha_evento"/></key>
+              <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY <get var="titulo_temp"/> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></value>
+            </modifymap>
+            <condition var="contactos_evento_anterior">
+              <li value="unknown"></li>
+              <li>
+                <addtomap>
+                  <name>evper</name>
+                  <key><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+                  <value><get var="contactos_evento_anterior"/></value>
+                </addtomap>
+              </li>
+            </condition>
+            Fecha del evento modificada de <get name="fecha_evento"/> a <get var="nueva_fecha_evento"/>
+          </li>
+          <li>La nueva fecha ya esta ocupada por otro evento a la misma hora que el anterior</li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA NUEVA FECHA DEL EVENTO</that>
+  <template>
+    <think>
+      <set var="dia"><srai>SELECTITEM 1 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="mes"><srai>SELECTITEM 2 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="anio"><srai>SELECTITEM 3 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset></srai></set>
+      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset></srai></set>
+      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset></srai></set>
+      <set var="fecha_valida"><srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="anio"/></srai></set>
+      <set var="validez">1</set>
+    </think>
+    <condition var="dia_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="mes_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="anio_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="fecha_valida">
+      <li value="YES"></li>
+      <li><think><set var="validez">0</set></think></li>
+    </condition>
+    <condition var="validez">
+      <li value="0">La fecha indicada no es valida</li>
+      <li>
+        <think>
+          <set var="nueva_fecha_evento"><get var="dia"/>/<get var="mes"/>/<get var="anio"/></set>
+          <set var="titulo_temp"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
+          <set var="titulo_evento_anterior"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></set>
+          <set var="contactos_evento_anterior"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
+          <set var="nueva_clave_evper"><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></set>
+          <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys></srai></set>
+          <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+        </think>
+        <modifymap>
+          <name>eventos</name>
+          <key><get name="fecha_evento"/></key>
+          <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY null IN <map name="eventos"><get name="fecha_evento"/></map></srai></value>
+        </modifymap>
+        <removefrommap>
+          <name>evper</name>
+          <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+        </removefrommap>
+        <condition var="posicion_eventos">
+          <li value="0">
+            <addtomap>
+              <name>eventos</name>
+              <key><get var="nueva_fecha_evento"/></key>
+              <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY <get var="titulo_temp"/> IN null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null</srai></value>
+            </addtomap>
+            <condition var="contactos_evento_anterior">
+              <li value="unknown"></li>
+              <li>
+                <addtomap>
+                  <name>evper</name>
+                  <key><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+                  <value><get var="contactos_evento_anterior"/></value>
+                </addtomap>
+              </li>
+            </condition>
+            Fecha del evento modificada de <get name="fecha_evento"/> a <get var="nueva_fecha_evento"/>
+          </li>
+          <li>
+            <condition var="titulo_evento_anterior">
+              <li value="null">
+                <modifymap>
+                  <name>eventos</name>
+                  <key><get var="nueva_fecha_evento"/></key>
+                  <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> BY <get var="titulo_temp"/> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></value>
+                </modifymap>
+                <condition var="contactos_evento_anterior">
+                  <li value="unknown"></li>
+                  <li>
+                    <addtomap>
+                      <name>evper</name>
+                      <key><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+                      <value><get var="contactos_evento_anterior"/></value>
+                    </addtomap>
+                  </li>
+                </condition>
+                Fecha del evento modificada de <get name="fecha_evento"/> a <get var="nueva_fecha_evento"/>
+              </li>
+              <li>La nueva fecha ya esta ocupada por otro evento a la misma hora que el anterior</li>
+            </condition>
+          </li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>^ DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA O UN CONTACTO ASOCIADO</that>
+  <template>No le he entendido, desea modificar el titulo, la fecha, la hora o un contacto asociado?</template>
 </category>
 
 <category>
   <pattern>^ nada ^</pattern>
-  <that>^ DESEA MODIFICAR EL TITULO, LA HORA O UN CONTACTO ASOCIADO</that>
+  <that>^ DESEA MODIFICAR EL TITULO, LA FECHA, LA HORA O UN CONTACTO ASOCIADO</that>
   <template>De acuerdo, no modifico nada</template>
 </category>
 
@@ -397,9 +765,112 @@
 
 
 
-
-
 <!--                            BORRAR EVENTO                            -->
+<category>
+  <pattern>^ [borrar eliminar] ^ evento ^</pattern>
+  <template>Dime la fecha del evento a eliminar</template>
+</category>
+
+<category>
+  <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <that>DIME LA FECHA DEL EVENTO A ELIMINAR</that>
+  <template>
+    <think><set name="fecha_evento"><star index="2"/>/<star index="3"/>/<star index="4"/></set></think>
+    Dime la hora del evento a eliminar
+  </template>
+</category>
+
+<category>
+  <pattern>^ <set>dias_validos</set> ([de del]) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <that>DIME LA FECHA DEL EVENTO A ELIMINAR</that>
+  <template>
+  <think><set name="fecha_evento"><star index="2"/>/<map name="mes_numero"><star index="3"/></map>/<star index="4"/></set></think>
+  Dime la hora del evento a eliminar
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA FECHA DEL EVENTO A ELIMINAR</that>
+  <template>
+    <think>
+      <set var="dia"><srai>SELECTITEM 1 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="mes"><srai>SELECTITEM 2 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="anio"><srai>SELECTITEM 3 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
+      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset></srai></set>
+      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset></srai></set>
+      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset></srai></set>
+      <set var="fecha_valida"><srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="anio"/></srai></set>
+      <set var="validez">1</set>
+    </think>
+    <condition var="dia_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="mes_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="anio_valido">
+      <li value="0"><think><set var="validez">0</set></think></li>
+      <li></li>
+    </condition>
+    <condition var="fecha_valida">
+      <li value="YES"></li>
+      <li><think><set var="validez">0</set></think></li>
+    </condition>
+    <condition var="validez">
+      <li value="0">La fecha indicada no es valida</li>
+      <li>
+        <think><set name="fecha_evento"><get var="dia"/>/<get var="mes"/>/<get var="anio"/></set></think>
+        Dime la hora del evento a eliminar
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>^ <set>horas_validas</set> ^</pattern>
+  <that>DIME LA HORA DEL EVENTO A ELIMINAR</that>
+  <template>
+    <think>
+      <set var="titulo"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <star index="2"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
+      <set var="pos_fecha"><srai>FINDITEM <get name="fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+    </think>
+    <condition var="pos_fecha">
+      <li value="0">El evento que intenta eliminar no existe</li>
+      <li>
+        <condition var="titulo">
+          <li value="null">El evento que intenta eliminar no existe</li>
+          <li>
+            fecha_evento=<get name="fecha_evento"/>
+            hora=<star index="2"/>
+            posicion=<map name="hora_posicion"><srai>QUITARDOSPUNTOS <star index="2"/></srai></map>
+            tocho anterior=<map name="eventos"><get name="fecha_evento"/></map>
+            <modifymap>
+              <name>eventos</name>
+              <key><get name="fecha_evento"/></key>
+              <value><srai>CHANGEITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <star index="2"/></srai></map> BY null IN <map name="eventos"><get name="fecha_evento"/></map></srai></value>
+            </modifymap>
+            <removefrommap>
+              <name>evper</name>
+              <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+            </removefrommap>
+            Evento eliminado correctamente
+          </li>
+        </condition>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>*</pattern>
+  <that>DIME LA HORA DEL EVENTO A ELIMINAR</that>
+  <template>
+    La hora indicada no es valida. Recuerde que los eventos comienzan a las en punto y a las y media. El formato de la hora es hh:mm donde hh esta en formato 24 horas
+  </template>
+</category>
 
 
 

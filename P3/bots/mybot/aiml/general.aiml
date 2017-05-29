@@ -8,7 +8,7 @@
 <category>
   <pattern>a *</pattern>
   <template>
-    <srai>QUITARDOSPUNTOS <star/></srai>
+    <srai>CHANGEITEM 2 BY asd IN <star/></srai>
   </template>
 </category>
 
