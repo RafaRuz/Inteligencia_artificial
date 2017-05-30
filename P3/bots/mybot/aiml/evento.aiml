@@ -900,9 +900,9 @@
       <li value="unknown"></li>
       <li>
         <think>
-          <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
-          <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
-          <set var="sol"></set>
+          palabra=<set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+          eventos=<set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+          sol=<set var="sol"></set>
         </think>
         <condition var="palabra">
           <li value="null">
@@ -915,9 +915,9 @@
           <li value="$"><get var="sol"/></li>
           <li>
             <think>
-              <set var="sol"><get var="sol"/> <get var="palabra"/></set>
-              <set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
-              <set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
+              sol=<set var="sol"><get var="sol"/> <get var="palabra"/></set>
+              palabra=<set var="palabra"><srai>TOP <get var="eventos"/></srai></set>
+              eventos=<set var="eventos"><srai>REMAIN <get var="eventos"/></srai></set>
             </think>
             <loop/>
           </li>

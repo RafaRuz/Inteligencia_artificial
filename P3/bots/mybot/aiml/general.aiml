@@ -6,9 +6,9 @@
 
 
 <category>
-  <pattern>a *</pattern>
+  <pattern>asd</pattern>
   <template>
-    <srai>CHANGEITEM 2 BY asd IN <star/></srai>
+    <srai>TOMORROW <date jformat="dd M yyyy"/></srai>
   </template>
 </category>
 

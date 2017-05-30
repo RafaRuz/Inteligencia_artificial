@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+	<!-- File: consultas.aiml -->
+	<!-- Author: Rafa -->
+	<!-- Last modified: May 17, 2017  -->
+
+
+<!--                  Tengo el dia libre?                           -->
+<category>
+  <pattern>Tengo el dia libre</pattern>
+  <template>
+    <set var="num_eventos"><srai>CANTIDADEVENTOS <date jformat="dd/M/yyyy"/></srai></set>
+    <condition var="num_eventos">
+      <li value="0">Si, tienes el dia libre. Hurra!</li>
+      <li>Hoy toca pringar :(</li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi proximo evento de hoy</pattern>
+  <template>
+    <think>
+      <set var="fecha"><date jformat="dd/M/yyyy"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="hora_siguiente_evento"><map name="hora_exacta"><date jformat="hhmm"/></map></set>
+      <set var="pos_siguiente_evento"><map name="hora_posicion"><get var="hora_siguiente_evento"/></map></set>
+    </think>
+    <condition var="pos_siguiente_evento">
+      <li value="0"></li>
+      <li>
+        <think>
+          <set var="pos_siguiente_evento"><map name="predecessor"><get var="pos_siguiente_evento"/></map></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+      </li>
+    </condition>
+    <think>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$">Por hoy no tienes mas eventos</li>
+      <li>El proximo evento de hoy es <get var="evento"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi proximo evento de mañana</pattern>
+  <template>
+    <think>
+      <set var="fecha"><srai>TOMORROW <date jformat="dd M yyyy"/></srai></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$">Mañana no tienes eventos</li>
+      <li>El proximo evento de mañana es <get var="evento"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi proximo evento [de del] (dia) *</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$">Mañana no tienes eventos</li>
+      <li>El proximo evento del dia <get var="fecha"/> es <get var="evento"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi proximo evento [de del] (dia) <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/>/<star index="2"/>/<star index="3"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$">Mañana no tienes eventos</li>
+      <li>El proximo evento del dia <get var="fecha"/> es <get var="evento"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi proximo evento [de del] (dia) <set>dias_validos</set> (de) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/>/<map name="mes_numero"><star index="2"/></map>/<star index="3"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$">Mañana no tienes eventos</li>
+      <li>El proximo evento del dia <get var="fecha"/> es <get var="evento"/></li>
+    </condition>
+  </template>
+</category>
+
+
+
+
+
+
+
+
+<category>
+  <pattern>Cual es mi ultimo evento de hoy</pattern>
+  <template>
+    <think>
+      <set var="fecha"><date jformat="dd/M/yyyy"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="hora_siguiente_evento"><map name="hora_exacta"><date jformat="hhmm"/></map></set>
+      <set var="pos_siguiente_evento"><map name="hora_posicion"><get var="hora_siguiente_evento"/></map></set>
+    </think>
+    <condition var="pos_siguiente_evento">
+      <li value="0"></li>
+      <li>
+        <think>
+          <set var="pos_siguiente_evento"><map name="predecessor"><get var="pos_siguiente_evento"/></map></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+      </li>
+    </condition>
+    <think>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+      <set var="solucion">unknown</set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$"></li>
+      <li>
+        <think>
+          <set var="solucion"><get var="evento"/></set>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <condition var="solucion">
+      <li value="unknown">No tienes mas eventos por hoy</li>
+      <li>El ultimo evento de hoy es <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi ultimo evento de mañana</pattern>
+  <template>
+    <think>
+      <set var="fecha"><srai>TOMORROW <date jformat="dd M yyyy"/></srai></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+      <set var="solucion">unknown</set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$"></li>
+      <li>
+        <think>
+          <set var="solucion"><get var="evento"/></set>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <condition var="solucion">
+      <li value="unknown">No tienes eventos mañana</li>
+      <li>El ultimo evento de mañana es <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi ultimo evento [de del] (dia) *</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+      <set var="solucion">unknown</set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$"></li>
+      <li>
+        <think>
+          <set var="solucion"><get var="evento"/></set>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <condition var="solucion">
+      <li value="unknown">No tienes eventos el dia <get var="fecha"/></li>
+      <li>El ultimo evento del dia <get var="fecha"/> es <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi ultimo evento [de del] (dia) <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/>/<star index="2"/>/<star index="3"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+      <set var="solucion">unknown</set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$"></li>
+      <li>
+        <think>
+          <set var="solucion"><get var="evento"/></set>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <condition var="solucion">
+      <li value="unknown">No tienes eventos el dia <get var="fecha"/></li>
+      <li>El ultimo evento del dia <get var="fecha"/> es <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Cual es mi ultimo evento [de del] (dia) <set>dias_validos</set> (de) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/>/<map name="mes_numero"><star index="2"/></map>/<star index="3"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+      <set var="solucion">unknown</set>
+    </think>
+    <condition var="evento">
+      <li value="null">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="unknown">
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+      <li value="$"></li>
+      <li>
+        <think>
+          <set var="solucion"><get var="evento"/></set>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <condition var="solucion">
+      <li value="unknown">No tienes eventos el dia <get var="fecha"/></li>
+      <li>El ultimo evento del dia <get var="fecha"/> es <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+
+
+<!--                        PLANTILLA                            -->
+<category>
+  <pattern></pattern>
+  <template></template>
+</category>
+
+
+</aiml>

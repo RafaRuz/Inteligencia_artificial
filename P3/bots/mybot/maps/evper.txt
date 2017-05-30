@@ -10,3 +10,4 @@ unknown_unknown:ruz_gomez
 2/1/2020_0000:unknown
 2/2/2020_0030:$
 5/5/2020_0030:ruz_gomez ruz_perez
+31/5/2017_0030:ruz_gomez
