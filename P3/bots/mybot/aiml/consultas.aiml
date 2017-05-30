@@ -907,6 +907,62 @@
 
 
 
+
+
+
+
+
+
+
+<category>
+  <pattern>Cuando tengo un evento con *</pattern>
+  <template>
+    <think>
+      <set var="apellido"><srai>ponerbarrabaja <star/></srai></set>
+      <set var="pos_contacto_agenda"><srai>FINDITEM <get var="apellido"/> IN <readset>contactos</readset> º</srai></set>
+    </think>
+    <condition var="pos_contacto_agenda">
+      <li value="0">El contacto <star/> no se encuentra en su agenda</li>
+      <li>
+        <think>
+          <set var="encontrado">0</set>
+          <set var="fecha_hora_sol"></set>
+          <set var="lista_fecha_hora"><readkeys>evper</readkeys></set>
+          <set var="fecha_hora"><srai>TOP <get var="lista_fecha_hora"/></srai></set>
+          <set var="lista_fecha_hora"><srai>REMAIN <get var="lista_fecha_hora"/></srai></set>
+        </think>
+        <condition var="fecha_hora">
+          <li value="$"></li>
+          <li>
+            <think>
+              <set var="pos_contacto_evper"><srai>FINDITEM <get var="apellido"/> IN <map name="evper"><get var="fecha_hora"/></map></srai></set>
+            </think>
+            <condition var="pos_contacto_evper">
+              <li value="0"></li>
+              <li>
+                <think>
+                  <set var="fecha_hora_sol"><get var="fecha_hora"/></set>
+                  <set var="encontrado">1</set>
+                </think>
+              </li>
+            </condition>
+            <think>
+              <set var="fecha_hora"><srai>TOP <get var="lista_fecha_hora"/></srai></set>
+              <set var="lista_fecha_hora"><srai>REMAIN <get var="lista_fecha_hora"/></srai></set>
+            </think>
+            <loop/>
+          </li>
+        </condition>
+      </li>
+    </condition>
+    <condition var="encontrado">
+      <li value="0">No tienes ningun evento con <star/></li>
+      <li value="1">Tienes un evento con <star/> el dia <get var="fecha_hora_sol"/></li>
+    </condition>
+  </template>
+</category>
+
+
 <!--                        PLANTILLA                            -->
 <category>
   <pattern></pattern>
