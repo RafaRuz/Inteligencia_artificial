@@ -484,6 +484,16 @@
           <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
           <value><srai>REMOVEITEM <get var="pos_contacto"/> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></value>
         </modifymap>
+        <think><set var="list_contactos"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set></think>
+        <condition var="list_contactos">
+          <li value="$">
+            <removefrommap>
+              <name>evper</name>
+              <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
+            </removefrommap>
+          </li>
+          <li></li>
+        </condition>
         Contacto eliminado, desea eliminar otro contacto?
       </li>
     </condition>
