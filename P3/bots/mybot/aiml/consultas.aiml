@@ -9,9 +9,9 @@
 <category>
   <pattern>Tengo el dia libre</pattern>
   <template>
-    <set var="num_eventos"><srai>CANTIDADEVENTOS <date jformat="dd/M/yyyy"/></srai></set>
-    <condition var="num_eventos">
-      <li value="0">Si, tienes el dia libre. Hurra!</li>
+    <think><set var="prox_evento"><srai>Cual es mi proximo evento de hoy</srai></set></think>
+    <condition var="prox_evento">
+      <li value="Por hoy no tienes mas eventos">Si, tienes el dia libre. Hurra!</li>
       <li>Hoy toca pringar :(</li>
     </condition>
   </template>
@@ -33,6 +33,7 @@
           <set var="pos_siguiente_evento"><map name="predecessor"><get var="pos_siguiente_evento"/></map></set>
           <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
         </think>
+        <loop/>
       </li>
     </condition>
     <think>
@@ -186,7 +187,7 @@
 
 
 
-
+<!--                          ULTIMO EVENTO                             -->
 <category>
   <pattern>Cual es mi ultimo evento de hoy</pattern>
   <template>
@@ -409,6 +410,500 @@
     </condition>
   </template>
 </category>
+
+
+
+
+<!--              CON QUIENES ME TENGO QUE REUNIR                 -->
+<category>
+  <pattern>Con [quienes quien] me tengo que reunir hoy</pattern>
+  <template>
+    <think>
+      <set var="solucion"></set>
+      <set var="i">0</set>
+      <set var="fecha"><date jformat="dd/M/yyyy"/></set>
+      <set var="lista_horas"><readkeys>hora_posicion</readkeys></set>
+      <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+      <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+      <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+    </think>
+    <condition var="i">
+      <li value="48"></li>
+      <li>
+        <condition var="pos_evper">
+          <li value="0">
+            <think>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+          <li>
+            <think>
+              <set var="lista_apellidos_temp"><map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+              <set var="j"><srai>COUNT <get var="lista_apellidos_temp"/></srai></set>
+              <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+              <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+              <set var="j"><map name="predecessor"><get var="j"/></map></set>
+              <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+              <condition var="j">
+                <li value="0"></li>
+                <li>
+                  <condition var="n">
+                    <li value="0">
+                      <set var="solucion"><get var="solucion"/> <map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                    <li>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                  </condition>
+                  <set var="j"><map name="predecessor"><get var="j"/></map></set>
+                  <loop/>
+                </li>
+              </condition>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+        </condition>
+        <think><set var="i"><map name="successor"><get var="i"/></map></set></think>
+        <loop/>
+      </li>
+    </condition>
+    <think><set var="c"><srai>COUNT <get var="solucion"/></srai></set></think>
+    <condition var="c">
+      <li value="0">Hoy no te tienes que reunir con nadie</li>
+      <li>Hoy te tienes que reunir con: <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Con [quien quienes] me tengo que reunir mañana</pattern>
+  <template>
+    <think>
+      <set var="solucion"></set>
+      <set var="i">0</set>
+      <set var="fecha"><srai>TOMORROW <date jformat="dd M yyyy"/></srai></set>
+      <set var="lista_horas"><readkeys>hora_posicion</readkeys></set>
+      <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+      <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+      <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+    </think>
+    <condition var="i">
+      <li value="48"></li>
+      <li>
+        <condition var="pos_evper">
+          <li value="0">
+            <think>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+          <li>
+            <think>
+              <set var="lista_apellidos_temp"><map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+              <set var="j"><srai>COUNT <get var="lista_apellidos_temp"/></srai></set>
+              <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+              <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+              <set var="j"><map name="predecessor"><get var="j"/></map></set>
+              <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+              <condition var="j">
+                <li value="0"></li>
+                <li>
+                  <condition var="n">
+                    <li value="0">
+                      <set var="solucion"><get var="solucion"/> <map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                    <li>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                  </condition>
+                  <set var="j"><map name="predecessor"><get var="j"/></map></set>
+                  <loop/>
+                </li>
+              </condition>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+        </condition>
+        <think><set var="i"><map name="successor"><get var="i"/></map></set></think>
+        <loop/>
+      </li>
+    </condition>
+    <think><set var="c"><srai>COUNT <get var="solucion"/></srai></set></think>
+    <condition var="c">
+      <li value="0">Mañana no te tienes que reunir con nadie</li>
+      <li>Mañana te tienes que reunir con: <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Con quienes me tengo que reunir el (dia) *</pattern>
+  <template>
+    <think>
+      <set var="solucion"></set>
+      <set var="i">0</set>
+      <set var="fecha"><star/></set>
+      <set var="lista_horas"><readkeys>hora_posicion</readkeys></set>
+      <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+      <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+      <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+    </think>
+    <condition var="i">
+      <li value="48"></li>
+      <li>
+        <condition var="pos_evper">
+          <li value="0">
+            <think>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+          <li>
+            <think>
+              <set var="lista_apellidos_temp"><map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+              <set var="j"><srai>COUNT <get var="lista_apellidos_temp"/></srai></set>
+              <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+              <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+              <set var="j"><map name="predecessor"><get var="j"/></map></set>
+              <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+              <condition var="j">
+                <li value="0"></li>
+                <li>
+                  <condition var="n">
+                    <li value="0">
+                      <set var="solucion"><get var="solucion"/> <map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                    <li>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                  </condition>
+                  <set var="j"><map name="predecessor"><get var="j"/></map></set>
+                  <loop/>
+                </li>
+              </condition>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+        </condition>
+        <think><set var="i"><map name="successor"><get var="i"/></map></set></think>
+        <loop/>
+      </li>
+    </condition>
+    <think><set var="c"><srai>COUNT <get var="solucion"/></srai></set></think>
+    <condition var="c">
+      <li value="0">El dia <get var="fecha"/> no te tienes que reunir con nadie</li>
+      <li>El dia <get var="fecha"/> te tienes que reunir con: <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Con quienes me tengo que reunir el (dia) <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="solucion"></set>
+      <set var="i">0</set>
+      <set var="fecha"><star/>/<star index="2"/>/<star index="3"/></set>
+      <set var="lista_horas"><readkeys>hora_posicion</readkeys></set>
+      <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+      <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+      <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+    </think>
+    <condition var="i">
+      <li value="48"></li>
+      <li>
+        <condition var="pos_evper">
+          <li value="0">
+            <think>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+          <li>
+            <think>
+              <set var="lista_apellidos_temp"><map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+              <set var="j"><srai>COUNT <get var="lista_apellidos_temp"/></srai></set>
+              <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+              <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+              <set var="j"><map name="predecessor"><get var="j"/></map></set>
+              <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+              <condition var="j">
+                <li value="0"></li>
+                <li>
+                  <condition var="n">
+                    <li value="0">
+                      <set var="solucion"><get var="solucion"/> <map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                    <li>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                  </condition>
+                  <set var="j"><map name="predecessor"><get var="j"/></map></set>
+                  <loop/>
+                </li>
+              </condition>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+        </condition>
+        <think><set var="i"><map name="successor"><get var="i"/></map></set></think>
+        <loop/>
+      </li>
+    </condition>
+    <think><set var="c"><srai>COUNT <get var="solucion"/></srai></set></think>
+    <condition var="c">
+      <li value="0">El dia <get var="fecha"/> no te tienes que reunir con nadie</li>
+      <li>El dia <get var="fecha"/> te tienes que reunir con: <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Con quienes me tengo que reunir el (dia) <set>dias_validos</set> (de) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="solucion"></set>
+      <set var="i">0</set>
+      <set var="fecha"><star/>/<map name="mes_numero"><star index="2"/></map>/<star index="3"/></set>
+      <set var="lista_horas"><readkeys>hora_posicion</readkeys></set>
+      <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+      <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+      <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+    </think>
+    <condition var="i">
+      <li value="48"></li>
+      <li>
+        <condition var="pos_evper">
+          <li value="0">
+            <think>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+          <li>
+            <think>
+              <set var="lista_apellidos_temp"><map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+              <set var="j"><srai>COUNT <get var="lista_apellidos_temp"/></srai></set>
+              <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+              <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+              <set var="j"><map name="predecessor"><get var="j"/></map></set>
+              <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+              <condition var="j">
+                <li value="0"></li>
+                <li>
+                  <condition var="n">
+                    <li value="0">
+                      <set var="solucion"><get var="solucion"/> <map name="evper"><get var="fecha"/>_<get var="hora"/></map></set>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                    <li>
+                      <set var="apellido_temp"><srai>TOP <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="lista_apellidos_temp"><srai>REMAIN <get var="lista_apellidos_temp"/></srai></set>
+                      <set var="n"><srai>FINDITEM <get var="apellido_temp"/> IN <get var="solucion"/> º</srai></set>
+                    </li>
+                  </condition>
+                  <set var="j"><map name="predecessor"><get var="j"/></map></set>
+                  <loop/>
+                </li>
+              </condition>
+              <set var="hora"><srai>TOP <get var="lista_horas"/></srai></set>
+              <set var="lista_horas"><srai>REMAIN <get var="lista_horas"/></srai></set>
+              <set var="pos_evper"><srai>FINDITEM <get var="fecha"/>_<get var="hora"/> IN <readkeys>evper</readkeys> º</srai></set>
+            </think>
+          </li>
+        </condition>
+        <think><set var="i"><map name="successor"><get var="i"/></map></set></think>
+        <loop/>
+      </li>
+    </condition>
+    <think><set var="c"><srai>COUNT <get var="solucion"/></srai></set></think>
+    <condition var="c">
+      <li value="0">El dia <get var="fecha"/> no te tienes que reunir con nadie</li>
+      <li>El dia <get var="fecha"/> te tienes que reunir con: <get var="solucion"/></li>
+    </condition>
+  </template>
+</category>
+
+
+
+
+
+
+
+
+
+
+<!--                TENGO ALGUN HUECO LIBRE?                      -->
+<category>
+  <pattern>Tengo algun hueco libre hoy</pattern>
+  <template>
+    <think>
+      <set var="fecha"><date jformat="dd/M/yyyy"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="hora_siguiente_evento"><map name="hora_exacta"><date jformat="hhmm"/></map></set>
+      <set var="pos_siguiente_evento"><map name="hora_posicion"><get var="hora_siguiente_evento"/></map></set>
+    </think>
+    <condition var="pos_siguiente_evento">
+      <li value="0"></li>
+      <li>
+        <think>
+          <set var="pos_siguiente_evento"><map name="predecessor"><get var="pos_siguiente_evento"/></map></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+    <think>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">Si, hoy tienes un hueco libre</li>
+      <li value="unknown">Si, hoy tienes un hueco libre</li>
+      <li value="$">Hoy no tienes ningun hueco libre</li>
+      <li>
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Tengo algun hueco libre mañana</pattern>
+  <template>
+    <think>
+      <set var="fecha"><srai>TOMORROW <date jformat="dd M yyyy"/></srai></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">Si, hoy tienes un hueco libre</li>
+      <li value="unknown">Si, hoy tienes un hueco libre</li>
+      <li value="$">Hoy no tienes ningun hueco libre</li>
+      <li>
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Tengo algun hueco libre el (dia) *</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">Si, el dia <get var="fecha"/> tienes un hueco libre</li>
+      <li value="unknown">Si, el dia <get var="fecha"/> tienes un hueco libre</li>
+      <li value="$">El dia <get var="fecha"/> no tienes ningun hueco libre</li>
+      <li>
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Tengo algun hueco libre el (dia) <set>dias_validos</set> (de) <set>meses_validos</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/>/<star index="2"/>/<star index="3"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">Si, el dia <get var="fecha"/> tienes un hueco libre</li>
+      <li value="unknown">Si, el dia <get var="fecha"/> tienes un hueco libre</li>
+      <li value="$">El dia <get var="fecha"/> no tienes ningun hueco libre</li>
+      <li>
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
+<category>
+  <pattern>Tengo algun hueco libre el (dia) <set>dias_validos</set> (de) <set>meses_validos_letra</set> ([de del]) <set>años_validos</set> ^</pattern>
+  <template>
+    <think>
+      <set var="fecha"><star/>/<map name="mes_numero"><star index="2"/></map>/<star index="3"/></set>
+      <set var="lista_eventos"><map name="eventos"><get var="fecha"/></map></set>
+      <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+      <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+    </think>
+    <condition var="evento">
+      <li value="null">Si, el dia <get var="fecha"/> tienes un hueco libre</li>
+      <li value="unknown">Si, el dia <get var="fecha"/> tienes un hueco libre</li>
+      <li value="$">El dia <get var="fecha"/> no tienes ningun hueco libre</li>
+      <li>
+        <think>
+          <set var="evento"><srai>TOP <get var="lista_eventos"/></srai></set>
+          <set var="lista_eventos"><srai>REMAIN <get var="lista_eventos"/></srai></set>
+        </think>
+        <loop/>
+      </li>
+    </condition>
+  </template>
+</category>
+
 
 
 

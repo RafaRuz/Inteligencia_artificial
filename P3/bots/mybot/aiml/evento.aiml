@@ -63,9 +63,9 @@
       <set var="dia"><srai>SELECTITEM 1 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="mes"><srai>SELECTITEM 2 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="anio"><srai>SELECTITEM 3 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
-      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset></srai></set>
-      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset></srai></set>
-      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset></srai></set>
+      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset> º</srai></set>
+      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset> º</srai></set>
+      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset> º</srai></set>
       <set var="fecha_valida"><srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="anio"/></srai></set>
       <set var="validez">1</set>
     </think>
@@ -102,7 +102,7 @@
     <think>
       <set name="hora_evento"><star index="2"/></set>
       <set var="pos_hora"><map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
-      <set var="pos_fecha_evento"><srai>FINDITEM <get name="fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+      <set var="pos_fecha_evento"><srai>FINDITEM <get name="fecha_evento"/> IN <readkeys>eventos</readkeys> º</srai></set>
     </think>
     <condition var="pos_fecha_evento">
     <li value="0">
@@ -167,7 +167,7 @@
         El contacto que quiere asociar no se encuentra en su agenda, quiere asociar otro contacto al evento?
       </li>
       <li>
-        <think><set var="pos_temp"><srai>FINDITEM <get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai> IN <readkeys>evper</readkeys></srai></set></think>
+        <think><set var="pos_temp"><srai>FINDITEM <get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai> IN <readkeys>evper</readkeys> º</srai></set></think>
         <condition var="pos_temp">
           <li value="0">
             <addtomap>
@@ -178,7 +178,7 @@
             Contacto agregado, quiere asociar otro contacto al evento?
           </li>
           <li>
-            <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></set></think>
+            <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> º</srai></set></think>
             <condition var="pos_contacto">
               <li value="0">
                 <modifymap>
@@ -281,9 +281,9 @@
       <set var="dia"><srai>SELECTITEM 1 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="mes"><srai>SELECTITEM 2 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="anio"><srai>SELECTITEM 3 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
-      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset></srai></set>
-      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset></srai></set>
-      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset></srai></set>
+      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset> º</srai></set>
+      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset> º</srai></set>
+      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset> º</srai></set>
       <set var="fecha_valida"><srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="anio"/></srai></set>
       <set var="validez">1</set>
     </think>
@@ -376,11 +376,16 @@
           <name>evper</name>
           <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></key>
         </removefrommap>
-        <addtomap>
-          <name>evper</name>
-          <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <star index="2"/></srai></key>
-          <value><get var="contactos_evento_anterior"/></value>
-        </addtomap>
+        <condition var="contactos_evento_anterior">
+          <li value="unknown"></li>
+          <li>
+            <addtomap>
+              <name>evper</name>
+              <key><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <star index="2"/></srai></key>
+              <value><get var="contactos_evento_anterior"/></value>
+            </addtomap>
+          </li>
+        </condition>
         <modifymap>
           <name>eventos</name>
           <key><get name="fecha_evento"/></key>
@@ -469,7 +474,7 @@
   <pattern>*</pattern>
   <that>DIME EL APELLIDO DEL CONTACTO QUE QUIERES ELIMINAR</that>
   <template>
-    <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></srai></set></think>
+    <think><set var="pos_contacto"><srai>FINDITEM <srai>ponerbarrabaja <star/></srai> IN <map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> º</srai></set></think>
     <condition var="pos_contacto">
       <li value="0">El contacto que intenta eliminar no se encuentra registrado en el evento, desea añadir o eliminar un contacto del evento?
       </li>
@@ -524,8 +529,8 @@
       <set var="titulo_evento_anterior"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></set>
       <set var="contactos_evento_anterior"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
       <set var="nueva_clave_evper"><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></set>
-      <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys></srai></set>
-      <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+      <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys> º</srai></set>
+      <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys> º</srai></set>
     </think>
     <modifymap>
       <name>eventos</name>
@@ -592,8 +597,8 @@
       <set var="titulo_evento_anterior"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></set>
       <set var="contactos_evento_anterior"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
       <set var="nueva_clave_evper"><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></set>
-      <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys></srai></set>
-      <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+      <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys> º</srai></set>
+      <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys> º</srai></set>
     </think>
     <modifymap>
       <name>eventos</name>
@@ -658,9 +663,9 @@
       <set var="dia"><srai>SELECTITEM 1 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="mes"><srai>SELECTITEM 2 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="anio"><srai>SELECTITEM 3 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
-      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset></srai></set>
-      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset></srai></set>
-      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset></srai></set>
+      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset> º</srai></set>
+      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset> º</srai></set>
+      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset> º</srai></set>
       <set var="fecha_valida"><srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="anio"/></srai></set>
       <set var="validez">1</set>
     </think>
@@ -689,8 +694,8 @@
           <set var="titulo_evento_anterior"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map> IN <map name="eventos"><get var="nueva_fecha_evento"/></map></srai></set>
           <set var="contactos_evento_anterior"><map name="evper"><get name="fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></map></set>
           <set var="nueva_clave_evper"><get var="nueva_fecha_evento"/>_<srai>QUITARDOSPUNTOS <get name="hora_evento"/></srai></set>
-          <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys></srai></set>
-          <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+          <set var="posicion_evper"><srai>FINDITEM <get var="nueva_clave_evper"/> IN <readkeys>evper</readkeys> º</srai></set>
+          <set var="posicion_eventos"><srai>FINDITEM <get var="nueva_fecha_evento"/> IN <readkeys>eventos</readkeys> º</srai></set>
         </think>
         <modifymap>
           <name>eventos</name>
@@ -797,9 +802,9 @@
       <set var="dia"><srai>SELECTITEM 1 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="mes"><srai>SELECTITEM 2 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
       <set var="anio"><srai>SELECTITEM 3 IN <srai>BARRASAESPACIOS <star/></srai></srai></set>
-      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset></srai></set>
-      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset></srai></set>
-      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset></srai></set>
+      <set var="dia_valido"><srai>FINDITEM <get var="dia"/> IN <readset>dias_validos</readset> º</srai></set>
+      <set var="mes_valido"><srai>FINDITEM <get var="mes"/> IN <readset>meses_validos</readset> º</srai></set>
+      <set var="anio_valido"><srai>FINDITEM <get var="anio"/> IN <readset>años_validos</readset> º</srai></set>
       <set var="fecha_valida"><srai>VALIDDATE <get var="dia"/> <get var="mes"/> <get var="anio"/></srai></set>
       <set var="validez">1</set>
     </think>
@@ -835,7 +840,7 @@
   <template>
     <think>
       <set var="titulo"><srai>SELECTITEM <map name="hora_posicion"><srai>QUITARDOSPUNTOS <star index="2"/></srai></map> IN <map name="eventos"><get name="fecha_evento"/></map></srai></set>
-      <set var="pos_fecha"><srai>FINDITEM <get name="fecha_evento"/> IN <readkeys>eventos</readkeys></srai></set>
+      <set var="pos_fecha"><srai>FINDITEM <get name="fecha_evento"/> IN <readkeys>eventos</readkeys> º</srai></set>
     </think>
     <condition var="pos_fecha">
       <li value="0">El evento que intenta eliminar no existe</li>

@@ -1,7 +1,2 @@
-ruz_gomez:andalusia
-asd:NORESP
-ruz_perez:polilla
-pollas:tu culo lol
-ru<:cantimpalo
-noresp:NORESP
-a:NORESP
+ruz_gomez:calle andalucia
+lopez_vazquez:granada

@@ -1,7 +1,2 @@
 ruz_gomez:123456789
-asd:NORESP
-ruz_perez:qtrol no tengo numeros xd
-pollas:987
-ru<:palote
-noresp:NORESP
-a:NORESP
+lopez_vazquez:789
